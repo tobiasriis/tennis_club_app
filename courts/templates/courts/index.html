@@ -1,0 +1,43 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+  <h1>Tennis Courts</h1>
+  <a href="{% url 'courts:court_add' %}" class="btn btn-primary"
+    >Add New Court</a
+  >
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for court in courts %}
+      <tr
+        onclick="window.location.href='{% url 'courts:court_detail' court.id %}'"
+        style="cursor: pointer"
+      >
+        <td>{{ court.name }}</td>
+        <td>{{ court.location }}</td>
+        <td>
+          <a
+            href="{% url 'courts:court_edit' court.id %}"
+            class="btn btn-warning"
+            >Edit</a
+          >
+          <form
+            action="{% url 'courts:court_delete' court.id %}"
+            method="post"
+            style="display: inline"
+          >
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

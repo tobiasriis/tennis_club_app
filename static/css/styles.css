@@ -1,0 +1,30 @@
+.navbar {
+    background-color: #B04A32; /* Reddish-brown clay color */
+    color: #010101; /* White text for contrast */
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+    background-color: #B04A32; /* Reddish-brown clay color */
+    color: #ffffff !important;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: #B04A32; /* Reddish-brown clay color */
+    color: #ffffff !important;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.opaque-court {
+    position: absolute;
+    top: 50%; /* Position it in the middle */
+    left: 50%; /* Position it in the middle */
+    transform: translate(-50%, -50%); /* Center the shape */
+    width: 100vw; /* Width of the court shape */
+    height: 60vh; /* Height of the court shape */
+    background-color: rgba(0, 255, 0, 0.2); /* Semi-transparent green color */
+    clip-path: polygon(0% 0%, 0% 100%, 50% 100%, 50% 0%); /* Create a court-like shape */
+    z-index: 1; /* Ensure it is behind other content */
+}

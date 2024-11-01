@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Installed Apps</title>
+  </head>
+  <body>
+    <h1>Installed Apps</h1>
+    <ul>
+      {% for app in app_urls %}
+      <li><a href="{{ app.url }}">{{ app.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

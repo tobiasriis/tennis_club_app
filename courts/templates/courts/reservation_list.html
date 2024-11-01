@@ -1,0 +1,23 @@
+{% extends 'base.html' %} {% block content %}
+<h1>Court Reservations</h1>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Court</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Reserved By</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for reservation in reservations %}
+    <tr>
+      <td>{{ reservation.court.name }}</td>
+      <td>{{ reservation.date }}</td>
+      <td>{{ reservation.start_time }}</td>
+      <td>{{ reservation.player.full_name }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+  <h1>Player Details</h1>
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p class="list-group-item">
+            <strong>First Name:</strong> {{ player.first_name }}
+          </p>
+          <p class="list-group-item">
+            <strong>Last Name:</strong> {{ player.last_name }}
+          </p>
+          <p class="list-group-item">
+            <strong>Date of Birth:</strong> {{ player.date_of_birth }}
+          </p>
+        </div>
+        <div class="col-md-6">
+          <p class="list-group-item">
+            <strong>Email:</strong> {{ player.email }}
+          </p>
+          <p class="list-group-item">
+            <strong>Phone Number:</strong> {{ player.phone_number }}
+          </p>
+        </div>
+      </div>
+      <!-- Action Buttons -->
+      <div class="mt-3">
+        <a
+          href="{% url 'users:edit_player' player.id %}"
+          class="btn btn-warning"
+          >Edit Player</a
+        >
+        <a
+          href="{% url 'users:delete_player' player.id %}"
+          class="btn btn-danger"
+          >Delete Player</a
+        >
+        <a href="{% url 'users:index' %}" class="btn btn-secondary"
+          >Back to List</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

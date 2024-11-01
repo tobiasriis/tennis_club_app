@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% load static %}
+<!-- Load the static files template tag -->
+
+{% block content %}
+<h1>Tennis Club Members</h1>
+<a href="{% url 'users:add_user' %}" class="btn btn-success">Add New User</a>
+
+<!-- Add margin between the button and the table -->
+<div class="mt-4">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Date of Birth</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for player in players %}
+      <tr
+        onclick="window.location.href='{% url 'users:player_detail' player.id %}'"
+        style="cursor: pointer"
+      >
+        <td>{{ player.first_name }}</td>
+        <td>{{ player.last_name }}</td>
+        <td>{{ player.date_of_birth }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Centered image below the table -->
+<div class="text-center mt-4">
+  <img
+    src="{% static 'images/rackets.jpg' %}"
+    alt="Rackets"
+    class="img-fluid"
+    style="opacity: 0.5; filter: grayscale(100%); max-width: 80%"
+  />
+</div>
+{% endblock %}

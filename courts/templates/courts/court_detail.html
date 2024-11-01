@@ -1,0 +1,49 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+  <h1>Court Details</h1>
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p class="list-group-item">
+            <strong>Court Name:</strong> {{ court.name }}
+          </p>
+          <p class="list-group-item">
+            <strong>Surface Type:</strong> {{ court.surface_type }}
+          </p>
+          <p class="list-group-item">
+            <strong>Location:</strong> {{ court.location }}
+          </p>
+        </div>
+        <div class="col-md-6">
+          <p class="list-group-item">
+            <strong>Capacity:</strong> {{ court.capacity }}
+          </p>
+          <p class="list-group-item">
+            <strong>Available Times:</strong> {{ court.available_times }}
+          </p>
+        </div>
+      </div>
+      <!-- Action Buttons -->
+      <div class="mt-3">
+        <a
+          href="{% url 'courts:court_reservation_add' %}"
+          class="btn btn-primary"
+          >Add New Reservation</a
+        >
+        <a href="{% url 'courts:court_edit' court.id %}" class="btn btn-warning"
+          >Edit Court</a
+        >
+        <a
+          href="{% url 'courts:court_delete' court.id %}"
+          class="btn btn-danger"
+          >Delete Court</a
+        >
+        <a href="{% url 'courts:index' %}" class="btn btn-secondary"
+          >Back to List</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
