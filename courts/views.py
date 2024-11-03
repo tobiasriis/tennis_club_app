@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from .models import Court, Reservation  # Adjust based on your actual model location
-from datetime import timedelta
+from datetime import timedelta, date
 from .forms import CourtForm, ReservationForm
 
 
@@ -13,7 +14,15 @@ def index(request):
 # Detail view for a specific court
 def court_detail(request, court_id):
     court = get_object_or_404(Court, id=court_id)
-    return render(request, "courts/court_detail.html", {"court": court})
+    reservations = Reservation.objects.filter(court=court, date__gte=date.today())
+    print("reservations_today_or_greater", reservations)
+    for reservation in reservations:
+        print(reservation.player.full_name(), reservation.date, reservation.start_time)
+    return render(
+        request,
+        "courts/court_detail.html",
+        {"court": court, "reservations": reservations},
+    )
 
 
 def court_add(request):
