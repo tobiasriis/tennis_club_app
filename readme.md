@@ -44,19 +44,17 @@ A Django-based application for managing tennis courts and reservations, designed
 
 3. **Install Requirements**:
 
-   ```pip install -r requirements.txt´´´
+   ```pip install -r requirements.txt
 
    ```
 
 4. **Mgrate database**:
 
-   ```python manage.py makemigrations
-   python manage.py migrate
-   ´´´
-
+   ```$ python manage.py makemigrations
+   $ python manage.py migrate
    ```
 
 5. **Run the server**:
-   ´´´python manage.py runserver
+   ```$ python manage.py runserver
    Access application at http://127.0.0.1:8000
-   ´´´
+   ```
