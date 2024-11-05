@@ -16,6 +16,7 @@ def installed_apps_view(request):
     }
 
     for app in installed_apps:
+        print("APP NAME: ", app)
         app_config_name = app.split(".")[-1]
         app_name = app_name_map.get(
             app_config_name, app_config_name.lower()
@@ -23,6 +24,7 @@ def installed_apps_view(request):
 
         try:
             url = reverse(f"{app_name}:index")
+            print("URL: ", url)
             app_urls.append({"name": app_name, "url": url})
         except NoReverseMatch:
             continue

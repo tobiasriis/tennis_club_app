@@ -24,4 +24,5 @@ urlpatterns = [
     path("users/", include("users.urls")),
     path("", views.installed_apps_view, name="installed_apps"),
     path("courts/", include("courts.urls")),
+    path("matches/", include("matches.urls")),
 ]

@@ -1,0 +1,46 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+  <h1>Tennis Matches</h1>
+  <a href="{% url 'matches:match_add' %}" class="btn btn-primary"
+    >Add New Match</a
+  >
+
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Match Date</th>
+        <th>Players</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for match in matches %}
+      <tr
+        onclick="window.location.href='{% url 'matches:match_detail' match.id %}'"
+        style="cursor: pointer"
+      >
+        <td>{{ match.date|date:"F j, Y" }}</td>
+        <td>{{ match.player_1 }} vs {{ match.player_2 }}</td>
+        <td>{{ match.get_status_display }}</td>
+        <td>
+          <a
+            href="{% url 'matches:match_edit' match.id %}"
+            class="btn btn-warning"
+            >Edit</a
+          >
+          <form
+            action="{% url 'matches:match_delete' match.id %}"
+            method="post"
+            style="display: inline"
+          >
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

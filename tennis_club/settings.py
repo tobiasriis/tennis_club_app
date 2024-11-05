@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "users.apps.UsersConfig",
     "courts.apps.CourtsConfig",
+    "matches.apps.MatchesConfig",
 ]
 
 MIDDLEWARE = [
