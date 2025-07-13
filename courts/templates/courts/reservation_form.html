@@ -1,49 +1,171 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+
+{% block title %}Book Court - Tennis Club{% endblock %}
+
+{% block content %}
 <div class="container">
-  <h1>Create a New Reservation</h1>
-  <form method="post">
-    {% csrf_token %}
+  <!-- Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'courts:index' %}">Courts</a></li>
+          <li class="breadcrumb-item active">Book Court</li>
+        </ol>
+      </nav>
 
-    <!-- Display form errors if any -->
-    {% if form.errors %}
-    <div class="alert alert-danger">
-      <ul>
-        {% for field in form %} {% for error in field.errors %}
-        <li>{{ field.label }}: {{ error }}</li>
-        {% endfor %} {% endfor %} {% for error in form.non_field_errors %}
-        <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
+      <div class="text-center">
+        <h1 class="display-5 fw-bold text-tennis-green mb-2">
+          <i class="fas fa-calendar-plus me-3"></i>Book a Court
+        </h1>
+        <p class="lead text-muted">Schedule your tennis court reservation</p>
+      </div>
     </div>
-    {% endif %}
+  </div>
 
-    <!-- Court selection -->
-    <div class="mb-3">
-      <label for="id_court" class="form-label">Court</label>
-      {{ form.court }}
-    </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-calendar-alt me-2"></i>Reservation Details
+          </h5>
+        </div>
+        <div class="card-body">
+          <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
 
-    <!-- Player selection -->
-    <div class="mb-3">
-      <label for="id_player" class="form-label">Player</label>
-      {{ form.player }}
-    </div>
+            <!-- Display form errors if any -->
+            {% if form.errors %}
+            <div class="alert alert-danger">
+              <h6 class="alert-heading">
+                <i class="fas fa-exclamation-triangle me-2"></i>Please fix the following errors:
+              </h6>
+              <ul class="mb-0">
+                {% for field in form %}
+                {% for error in field.errors %}
+                <li>{{ field.label }}: {{ error }}</li>
+                {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
 
-    <!-- Date and Start Time -->
-    <div class="mb-3">
-      <label for="id_date" class="form-label">Date</label>
-      {{ form.date }}
-    </div>
-    <div class="mb-3">
-      <label for="id_start_time" class="form-label">Start Time</label>
-      {{ form.start_time }}
-    </div>
+            <div class="row">
+              <!-- Court selection -->
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.court.id_for_label }}" class="form-label">
+                  <i class="fas fa-court me-2"></i>Select Court
+                </label>
+                {{ form.court }}
+                {% if form.court.help_text %}
+                <div class="form-text">{{ form.court.help_text }}</div>
+                {% endif %}
+              </div>
 
-    <!-- Submit and Cancel buttons -->
-    <button type="submit" class="btn btn-primary">Submit Reservation</button>
-    <a href="{% url 'courts:reservation_list' %}" class="btn btn-secondary"
-      >Cancel</a
-    >
-  </form>
+              <!-- Player selection -->
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.player.id_for_label }}" class="form-label">
+                  <i class="fas fa-user me-2"></i>Select Player
+                </label>
+                {{ form.player }}
+                {% if form.player.help_text %}
+                <div class="form-text">{{ form.player.help_text }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Date selection -->
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.date.id_for_label }}" class="form-label">
+                  <i class="fas fa-calendar me-2"></i>Date
+                </label>
+                {{ form.date }}
+                {% if form.date.help_text %}
+                <div class="form-text">{{ form.date.help_text }}</div>
+                {% endif %}
+              </div>
+
+              <!-- Start Time selection -->
+              <div class="col-md-6 mb-3">
+                <label for="{{ form.start_time.id_for_label }}" class="form-label">
+                  <i class="fas fa-clock me-2"></i>Start Time
+                </label>
+                {{ form.start_time }}
+                {% if form.start_time.help_text %}
+                <div class="form-text">{{ form.start_time.help_text }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Reservation Info -->
+            <div class="alert alert-info">
+              <h6 class="alert-heading">
+                <i class="fas fa-info-circle me-2"></i>Reservation Information
+              </h6>
+              <ul class="mb-0">
+                <li>Reservations are for <strong>1 hour</strong> duration</li>
+                <li>Court hours are from <strong>9:00 AM to 9:00 PM</strong></li>
+                <li>You can book up to <strong>7 days in advance</strong></li>
+                <li>Cancellations must be made at least <strong>2 hours</strong> before the reservation</li>
+              </ul>
+            </div>
+
+            <!-- Submit and Cancel buttons -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <a href="{% url 'courts:reservation_list' %}" class="btn btn-secondary me-md-2">
+                <i class="fas fa-times me-2"></i>Cancel
+              </a>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-calendar-check me-2"></i>Book Reservation
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Available Courts Info -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-info-circle me-2"></i>Available Courts
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            {% for court in courts %}
+            <div class="col-md-6 mb-3">
+              <div class="d-flex align-items-center p-3 border rounded">
+                <i class="fas fa-court fa-2x text-tennis-green me-3"></i>
+                <div>
+                  <h6 class="mb-1">{{ court.name }}</h6>
+                  <small class="text-muted">{{ court.surface_type|title }} • {{ court.location }}</small>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script>
+  // Set minimum date to today
+  document.addEventListener('DOMContentLoaded', function () {
+    const dateInput = document.getElementById('{{ form.date.id_for_label }}');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
+
+    // Set default date to today if empty
+    if (!dateInput.value) {
+      dateInput.value = today;
+    }
+  });
+</script>
 {% endblock %}

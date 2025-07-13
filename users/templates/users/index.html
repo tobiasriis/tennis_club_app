@@ -1,42 +1,213 @@
-{% extends "base.html" %} {% load static %}
-<!-- Load the static files template tag -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Players - Tennis Club{% endblock %}
 
 {% block content %}
-<h1>Tennis Club Members</h1>
-<a href="{% url 'users:add_user' %}" class="btn btn-success">Add New User</a>
+<div class="container">
+  <!-- Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="display-5 fw-bold text-tennis-green mb-2">
+            <i class="fas fa-users me-3"></i>Tennis Club Members
+          </h1>
+          <p class="lead text-muted">Manage and view all registered players</p>
+        </div>
+        <a href="{% url 'users:add_user' %}" class="btn btn-primary btn-lg">
+          <i class="fas fa-user-plus me-2"></i>Add New Player
+        </a>
+      </div>
+    </div>
+  </div>
 
-<!-- Add margin between the button and the table -->
-<div class="mt-4">
-  <table class="table table-bordered table-hover">
-    <thead>
-      <tr>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Date of Birth</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for player in players %}
-      <tr
-        onclick="window.location.href='{% url 'users:player_detail' player.id %}'"
-        style="cursor: pointer"
-      >
-        <td>{{ player.first_name }}</td>
-        <td>{{ player.last_name }}</td>
-        <td>{{ player.date_of_birth }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+  <!-- Statistics Row -->
+  <div class="row mb-4">
+    <div class="col-md-4 mb-3">
+      <div class="card bg-info text-white">
+        <div class="card-body text-center">
+          <i class="fas fa-users fa-2x mb-2"></i>
+          <h4 class="mb-0">{{ players.count }}</h4>
+          <small>Total Members</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card bg-success text-white">
+        <div class="card-body text-center">
+          <i class="fas fa-calendar-check fa-2x mb-2"></i>
+          <h4 class="mb-0">{{ active_players|default:"0" }}</h4>
+          <small>Active This Month</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card bg-warning text-white">
+        <div class="card-body text-center">
+          <i class="fas fa-trophy fa-2x mb-2"></i>
+          <h4 class="mb-0">{{ matches_played|default:"0" }}</h4>
+          <small>Matches This Month</small>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<!-- Centered image below the table -->
-<div class="text-center mt-4">
-  <img
-    src="{% static 'images/rackets.jpg' %}"
-    alt="Rackets"
-    class="img-fluid"
-    style="opacity: 0.5; filter: grayscale(100%); max-width: 80%"
-  />
+  <!-- Players Grid -->
+  {% if players %}
+  <div class="row">
+    {% for player in players %}
+    <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card hover-lift h-100">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="fas fa-user-circle me-2"></i>{{ player.first_name }} {{ player.last_name }}
+            </h5>
+            <span class="badge bg-success">Active</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-6">
+              <small class="text-muted d-block">Age</small>
+              <strong>{{ player.age|default:"N/A" }}</strong>
+            </div>
+            <div class="col-6">
+              <small class="text-muted d-block">Member Since</small>
+              <strong>{{ player.date_of_birth|date:"M Y" }}</strong>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <small class="text-muted d-block">Contact</small>
+            <div class="d-flex align-items-center mb-1">
+              <i class="fas fa-envelope text-muted me-2"></i>
+              <small>{{ player.email }}</small>
+            </div>
+            <div class="d-flex align-items-center">
+              <i class="fas fa-phone text-muted me-2"></i>
+              <small>{{ player.phone_number }}</small>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <small class="text-muted d-block">Recent Activity</small>
+            {% with player.player_1_matches.all|slice:":2" as recent_matches %}
+            {% if recent_matches %}
+            {% for match in recent_matches %}
+            <div class="d-flex justify-content-between align-items-center py-1">
+              <small>{{ match.date|date:"M j" }}</small>
+              <small class="text-muted">{{ match.get_status_display }}</small>
+            </div>
+            {% endfor %}
+            {% else %}
+            <small class="text-muted">No recent matches</small>
+            {% endif %}
+            {% endwith %}
+          </div>
+        </div>
+        <div class="card-footer bg-transparent">
+          <div class="d-grid gap-2">
+            <a href="{% url 'users:player_detail' player.id %}" class="btn btn-outline-primary btn-sm">
+              <i class="fas fa-eye me-2"></i>View Profile
+            </a>
+            <div class="btn-group" role="group">
+              <a href="{% url 'users:edit_player' player.id %}" class="btn btn-outline-warning btn-sm">
+                <i class="fas fa-edit me-1"></i>Edit
+              </a>
+              <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                data-bs-target="#deleteModal{{ player.id }}">
+                <i class="fas fa-trash me-1"></i>Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal{{ player.id }}" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Delete Player</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete <strong>{{ player.first_name }} {{ player.last_name }}</strong>?</p>
+            <p class="text-muted">This action cannot be undone.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form action="{% url 'users:delete_player' player.id %}" method="post" style="display: inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Delete Player</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <!-- Empty State -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card text-center py-5">
+        <div class="card-body">
+          <i class="fas fa-users fa-4x text-muted mb-4"></i>
+          <h3 class="text-muted mb-3">No Players Registered</h3>
+          <p class="text-muted mb-4">Get started by adding your first club member to the system.</p>
+          <a href="{% url 'users:add_user' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-user-plus me-2"></i>Add Your First Player
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Quick Actions -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-bolt me-2"></i>Quick Actions
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <a href="{% url 'users:add_user' %}" class="btn btn-outline-primary w-100">
+                <i class="fas fa-user-plus me-2"></i>Add New Player
+              </a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="{% url 'matches:index' %}" class="btn btn-outline-success w-100">
+                <i class="fas fa-trophy me-2"></i>View Matches
+              </a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="{% url 'courts:reservation_list' %}" class="btn btn-outline-info w-100">
+                <i class="fas fa-calendar-alt me-2"></i>View Reservations
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tennis Image -->
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="text-center">
+        <img src="{% static 'images/rackets.jpg' %}" alt="Tennis Rackets" class="img-fluid rounded"
+          style="opacity: 0.3; filter: grayscale(100%); max-width: 60%" />
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

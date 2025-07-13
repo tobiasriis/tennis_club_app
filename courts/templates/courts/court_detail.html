@@ -1,94 +1,214 @@
-{% extends 'base.html' %} {% block content %}
-<div class="container">
-  <h1>Court Details</h1>
-  <div class="card">
-    <div class="card-body">
-      <div class="row">
-        <div class="col-md-6">
-          <p class="list-group-item">
-            <strong>Court Name:</strong> {{ court.name }}
-          </p>
-          <p class="list-group-item">
-            <strong>Surface Type:</strong> {{ court.surface_type }}
-          </p>
-          <p class="list-group-item">
-            <strong>Location:</strong> {{ court.location }}
-          </p>
-        </div>
-        <div class="col-md-6">
-          <p class="list-group-item">
-            <strong>Capacity:</strong> {{ court.capacity }}
-          </p>
-          <p class="list-group-item">
-            <strong>Available Times:</strong> {{ court.available_times }}
-          </p>
-        </div>
-      </div>
+{% extends 'base.html' %}
 
-      <!-- Action Buttons -->
-      <div class="mt-3">
-        <a
-          href="{% url 'courts:court_reservation_add' %}?court={{ court.id }}"
-          class="btn btn-primary"
-        >
-          Add New Reservation
-        </a>
-        <a href="{% url 'courts:court_edit' court.id %}" class="btn btn-warning"
-          >Edit Court</a
-        >
-        <a
-          href="{% url 'courts:court_delete' court.id %}"
-          class="btn btn-danger"
-          >Delete Court</a
-        >
-        <a href="{% url 'courts:index' %}" class="btn btn-secondary"
-          >Back to List</a
-        >
+{% block title %}{{ court.name }} - Tennis Club{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'courts:index' %}">Courts</a></li>
+          <li class="breadcrumb-item active">{{ court.name }}</li>
+        </ol>
+      </nav>
+
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="display-5 fw-bold text-tennis-green mb-2">
+            <i class="fas fa-court me-3"></i>{{ court.name }}
+          </h1>
+          <p class="lead text-muted">{{ court.location }}</p>
+        </div>
+        <div class="btn-group" role="group">
+          <a href="{% url 'courts:court_edit' court.id %}" class="btn btn-warning">
+            <i class="fas fa-edit me-2"></i>Edit Court
+          </a>
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            <i class="fas fa-trash me-2"></i>Delete
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Upcoming Reservations Section -->
-  <h2 class="mt-4">Upcoming Reservations</h2>
-  {% if reservations %}
-  <table class="table table-bordered table-hover mt-3">
-    <thead>
-      <tr>
-        <th>Player</th>
-        <th>Start Time</th>
-        <th>End Time</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for reservation in reservations %}
-      <tr>
-        <td>{{ reservation.player.full_name }}</td>
-        <td>{{ reservation.date }}</td>
-        <td>{{ reservation.end_time }}</td>
-        {% comment %}
-        <td>
-          <a
-            href="{% url 'courts:edit_reservation' reservation.id %}"
-            class="btn btn-warning btn-sm"
-            >Edit</a
-          >
-          <form
-            action="{% url 'courts:delete_reservation' reservation.id %}"
-            method="post"
-            style="display: inline"
-          >
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-          </form>
-        </td>
-        {% endcomment %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p>No upcoming reservations for this court.</p>
-  {% endif %}
+  <div class="row">
+    <!-- Court Information -->
+    <div class="col-lg-4 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-info-circle me-2"></i>Court Information
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-6">
+              <small class="text-muted d-block">Surface Type</small>
+              <strong>{{ court.surface_type|title }}</strong>
+            </div>
+            <div class="col-6">
+              <small class="text-muted d-block">Location</small>
+              <strong>{{ court.location }}</strong>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <small class="text-muted d-block">Status</small>
+            <span class="court-status available">Available</span>
+          </div>
+
+          <div class="mb-3">
+            <small class="text-muted d-block">Today's Reservations</small>
+            <strong>{{ reservations.count }}</strong> bookings
+          </div>
+
+          <div class="d-grid">
+            <a href="{% url 'courts:court_reservation_add' %}?court={{ court.id }}" class="btn btn-primary">
+              <i class="fas fa-calendar-plus me-2"></i>Book This Court
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Reservations -->
+    <div class="col-lg-8 mb-4">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-calendar-alt me-2"></i>Upcoming Reservations
+          </h5>
+        </div>
+        <div class="card-body">
+          {% if reservations %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Player</th>
+                  <th>Duration</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for reservation in reservations %}
+                <tr>
+                  <td>
+                    <strong>{{ reservation.date|date:"M j, Y" }}</strong>
+                    <br>
+                    <small class="text-muted">{{ reservation.date|date:"l" }}</small>
+                  </td>
+                  <td>
+                    <strong>{{ reservation.start_time|time:"H:i" }}</strong>
+                    <br>
+                    <small class="text-muted">to {{ reservation.end_time|time:"H:i" }}</small>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="fas fa-user-circle fa-2x text-muted me-2"></i>
+                      <div>
+                        <strong>{{ reservation.player.full_name }}</strong>
+                        <br>
+                        <small class="text-muted">{{ reservation.player.email }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-success">1 Hour</span>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <button type="button" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button type="button" class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-4">
+            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No Upcoming Reservations</h5>
+            <p class="text-muted">This court is available for booking.</p>
+            <a href="{% url 'courts:court_reservation_add' %}?court={{ court.id }}" class="btn btn-primary">
+              <i class="fas fa-calendar-plus me-2"></i>Book Now
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="fas fa-bolt me-2"></i>Quick Actions
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <a href="{% url 'courts:court_reservation_add' %}?court={{ court.id }}"
+                class="btn btn-outline-primary w-100">
+                <i class="fas fa-calendar-plus me-2"></i>Book Court
+              </a>
+            </div>
+            <div class="col-md-3 mb-3">
+              <a href="{% url 'courts:court_edit' court.id %}" class="btn btn-outline-warning w-100">
+                <i class="fas fa-edit me-2"></i>Edit Court
+              </a>
+            </div>
+            <div class="col-md-3 mb-3">
+              <a href="{% url 'courts:reservation_list' %}" class="btn btn-outline-info w-100">
+                <i class="fas fa-calendar-alt me-2"></i>All Reservations
+              </a>
+            </div>
+            <div class="col-md-3 mb-3">
+              <a href="{% url 'courts:index' %}" class="btn btn-outline-secondary w-100">
+                <i class="fas fa-arrow-left me-2"></i>Back to Courts
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Court</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete <strong>{{ court.name }}</strong>?</p>
+        <p class="text-muted">This action cannot be undone and will also delete all associated reservations.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="{% url 'courts:court_delete' court.id %}" method="post" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Delete Court</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
